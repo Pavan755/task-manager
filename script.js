@@ -1,4 +1,14 @@
 
+// Function: Escape HTML to prevent XSS-----------------------------
+
+
+function escapeHTML(text) {
+
+    const div = document.createElement("div");// Create a temporary div element
+    div.textContent = text;// Set the text content to the input text (automatically escapes HTML)
+    return div.innerHTML;// Return the escaped HTML
+
+}
 // DOM Elements -----------------------------
 
 
@@ -27,7 +37,7 @@ let incognitoMode = false;   // Incognito mode flag
 
 addTaskBtn.addEventListener("click", addTask);
 // Allow adding task with ENTER key
-taskInput.addEventListener("keypress", function(event) {
+taskInput.addEventListener("keypress", function (event) {
 
     if (event.key === "Enter") {
         addTask();
@@ -35,7 +45,7 @@ taskInput.addEventListener("keypress", function(event) {
 
 });
 // Prevent form submission on ENTER key
-taskInput.addEventListener("keypress", function(event) {
+taskInput.addEventListener("keypress", function (event) {
 
     if (event.key === "Enter") {
 
@@ -47,6 +57,11 @@ taskInput.addEventListener("keypress", function(event) {
 });
 
 
+// Validate task length-----------------------------
+if (text.length > 100) {
+    alert("Task must be under 100 characters.");
+    return;
+}
 
 // -----------------------------
 // Function: Add a new task
@@ -54,7 +69,7 @@ taskInput.addEventListener("keypress", function(event) {
 
 function addTask() {
 
-    const text = taskInput.value.trim();
+    const text = escapeHTML(taskInput.value.trim());// Get and escape task text and user input is sanitized before rendering
     const energy = energyTag.value;
 
     // Prevent empty tasks
@@ -113,6 +128,24 @@ function renderTasks() {
 
     if (currentFilter === "deep") {
         filteredTasks = tasks.filter(task => task.energy === "deep");
+    }
+
+    // Show empty state if no tasks exist
+    if (filteredTasks.length === 0) {
+
+        const emptyMessage = document.createElement("li");
+
+        emptyMessage.className = "empty-state";
+
+        emptyMessage.innerHTML = `
+        <span>No tasks yet ✏️</span>
+        <small>Add something to get started</small>
+    `;
+
+        taskList.appendChild(emptyMessage);
+
+        updateProgress();
+        return;
     }
 
 
@@ -283,4 +316,4 @@ privacyToggle.addEventListener("click", () => {
 // Render tasks when page loads
 // -----------------------------
 
-renderTasks();t
+renderTasks(); t
