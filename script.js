@@ -1,55 +1,53 @@
-
-// Function: Escape HTML to prevent XSS-----------------------------
-
+// ------------------------------------------------------
+// Function: Escape HTML to prevent XSS attacks
+// ------------------------------------------------------
 
 function escapeHTML(text) {
 
-    const div = document.createElement("div");// Create a temporary div element
-    div.textContent = text;// Set the text content to the input text (automatically escapes HTML)
-    return div.innerHTML;// Return the escaped HTML
+    const div = document.createElement("div"); // Create temporary element
+    div.textContent = text; // Browser escapes any HTML automatically
+    return div.innerHTML; // Return safe text
 
 }
-// DOM Elements -----------------------------
-
-
-const taskInput = document.getElementById("taskInput");   // Task input field
-const energyTag = document.getElementById("energyTag");   // Energy tag dropdown
-const addTaskBtn = document.getElementById("addTaskBtn"); // Add task button
-const taskList = document.getElementById("taskList");     // Task list container
-const progressBar = document.getElementById("progress");  // Progress bar element
-const privacyToggle = document.getElementById("privacyToggle"); // Privacy toggle button
 
 
 
+// ------------------------------------------------------
+// DOM Elements
+// ------------------------------------------------------
 
-// Load tasks from localStorage-----------------------------
-
-
-let tasks = JSON.parse(localStorage.getItem("tasks")) || []; // Task array
-let currentFilter = "all";   // Current filter
-let incognitoMode = false;   // Incognito mode flag
-
-
-
-
-// Add task button click event-----------------------------
+const taskInput = document.getElementById("taskInput");       // Task input field
+const energyTag = document.getElementById("energyTag");       // Energy tag dropdown
+const addTaskBtn = document.getElementById("addTaskBtn");     // Add task button
+const taskList = document.getElementById("taskList");         // Task list container
+const progressBar = document.getElementById("progress");      // Progress bar element
+const privacyToggle = document.getElementById("privacyToggle"); // Incognito toggle button
 
 
+
+// ------------------------------------------------------
+// Load tasks from localStorage
+// ------------------------------------------------------
+
+let tasks = JSON.parse(localStorage.getItem("tasks")) || []; // Task storage
+let currentFilter = "all";                                   // Current filter state
+let incognitoMode = false;                                   // Incognito mode flag
+
+
+
+// ------------------------------------------------------
+// Event Listeners
+// ------------------------------------------------------
+
+// Add task by clicking button
 addTaskBtn.addEventListener("click", addTask);
+
 // Allow adding task with ENTER key
 taskInput.addEventListener("keypress", function (event) {
 
     if (event.key === "Enter") {
-        addTask();
-    }
 
-});
-// Prevent form submission on ENTER key
-taskInput.addEventListener("keypress", function (event) {
-
-    if (event.key === "Enter") {
-
-        event.preventDefault();
+        event.preventDefault(); // Prevent form refresh
         addTask();
 
     }
@@ -57,80 +55,100 @@ taskInput.addEventListener("keypress", function (event) {
 });
 
 
-// Validate task length-----------------------------
-if (text.length > 100) {
-    alert("Task must be under 100 characters.");
-    return;
-}
 
-// -----------------------------
-// Function: Add a new task
-// -----------------------------
+// ------------------------------------------------------
+// Function: Add new task
+// ------------------------------------------------------
 
 function addTask() {
 
-    const text = escapeHTML(taskInput.value.trim());// Get and escape task text and user input is sanitized before rendering
+    const text = escapeHTML(taskInput.value.trim()); // Sanitize input
     const energy = energyTag.value;
 
     // Prevent empty tasks
     if (text === "") {
+
         alert("Task cannot be empty");
         return;
+
+    }
+
+    // Prevent extremely long tasks
+    if (text.length > 100) {
+
+        alert("Task must be under 100 characters.");
+        return;
+
     }
 
     // Create task object
     const task = {
+
         id: Date.now(),
         text: text,
         energy: energy,
         completed: false
+
     };
 
-    // Add task
+    // Add task to list
     tasks.push(task);
 
     // Save tasks
     saveTasks();
 
-    // Clear input
+    // Clear input field
     taskInput.value = "";
 
-    // Re-render UI
+    // Update UI
     renderTasks();
+
 }
 
 
 
-// -----------------------------
-// Function: Render tasks
-// -----------------------------
+// ------------------------------------------------------
+// Function: Render tasks to UI
+// ------------------------------------------------------
 
 function renderTasks() {
 
-    // Clear list
-    taskList.innerHTML = "";
+    taskList.innerHTML = ""; // Clear list
 
     let filteredTasks = tasks;
 
     // Apply filters
 
     if (currentFilter === "active") {
+
         filteredTasks = tasks.filter(task => !task.completed);
+
     }
 
     if (currentFilter === "completed") {
+
         filteredTasks = tasks.filter(task => task.completed);
+
     }
 
     if (currentFilter === "quick") {
+
         filteredTasks = tasks.filter(task => task.energy === "quick");
+
     }
 
     if (currentFilter === "deep") {
+
         filteredTasks = tasks.filter(task => task.energy === "deep");
+
     }
 
-    // Show empty state if no tasks exist
+
+
+    // --------------------------------------------------
+    // Empty State UI
+    // --------------------------------------------------
+
     if (filteredTasks.length === 0) {
 
         const emptyMessage = document.createElement("li");
@@ -138,18 +156,22 @@ function renderTasks() {
         emptyMessage.className = "empty-state";
 
         emptyMessage.innerHTML = `
-        <span>No tasks yet ✏️</span>
-        <small>Add something to get started</small>
-    `;
+            <span>No tasks yet ✏️</span>
+            <small>Add something to get started</small>
+        `;
 
         taskList.appendChild(emptyMessage);
 
         updateProgress();
         return;
+
     }
 
 
-    // Render tasks
+
+    // --------------------------------------------------
+    // Render Tasks
+    // --------------------------------------------------
 
     filteredTasks.forEach(task => {
 
@@ -170,30 +192,31 @@ function renderTasks() {
 
     });
 
-    // Update progress bar
     updateProgress();
+
 }
 
 
 
-// -----------------------------
+// ------------------------------------------------------
 // Function: Toggle task completion
 // Includes burn animation
-// -----------------------------
+// ------------------------------------------------------
 
 function toggleTask(id, btn) {
 
     const taskElement = btn.closest("li");
 
-    // Burn animation
-    taskElement.classList.add("burn");
+    taskElement.classList.add("burn"); // Trigger animation
 
     setTimeout(() => {
 
         tasks = tasks.map(task => {
 
             if (task.id === id) {
+
                 task.completed = !task.completed;
+
             }
 
             return task;
@@ -204,13 +227,14 @@ function toggleTask(id, btn) {
         renderTasks();
 
     }, 400);
+
 }
 
 
 
-// -----------------------------
+// ------------------------------------------------------
 // Function: Delete task
-// -----------------------------
+// ------------------------------------------------------
 
 function deleteTask(id) {
 
@@ -218,13 +242,14 @@ function deleteTask(id) {
 
     saveTasks();
     renderTasks();
+
 }
 
 
 
-// -----------------------------
-// Function: Save tasks
-// -----------------------------
+// ------------------------------------------------------
+// Function: Save tasks to localStorage
+// ------------------------------------------------------
 
 function saveTasks() {
 
@@ -234,46 +259,53 @@ function saveTasks() {
 
 
 
-// -----------------------------
+// ------------------------------------------------------
 // Function: Update progress bar
-// -----------------------------
+// ------------------------------------------------------
 
 function updateProgress() {
 
     const progressText = document.getElementById("progressText");
 
     const totalTasks = tasks.length;
-
     const completedTasks = tasks.filter(task => task.completed).length;
 
     let percent = 0;
 
     if (totalTasks > 0) {
+
         percent = Math.round((completedTasks / totalTasks) * 100);
+
     }
 
     // Update progress bar width
     progressBar.style.width = percent + "%";
 
-    // Update progress text
+    // Update progress label
     if (progressText) {
+
         progressText.textContent = percent + "% complete";
+
     }
 
-    // Optional: highlight when 100% completed
+    // Optional visual highlight when completed
     if (percent === 100) {
+
         progressBar.style.background = "black";
+
     } else {
+
         progressBar.style.background = "";
+
     }
 
 }
 
 
 
-// -----------------------------
+// ------------------------------------------------------
 // Filter button logic
-// -----------------------------
+// ------------------------------------------------------
 
 const filterButtons = document.querySelectorAll(".filters button");
 
@@ -291,29 +323,32 @@ filterButtons.forEach(button => {
 
 
 
-// -----------------------------
+// ------------------------------------------------------
 // Incognito Mode Toggle
-// -----------------------------
+// ------------------------------------------------------
 
 privacyToggle.addEventListener("click", () => {
 
     incognitoMode = !incognitoMode;
 
     if (incognitoMode) {
+
         taskList.classList.add("incognito");
         privacyToggle.innerText = "Disable Incognito";
-    }
-    else {
+
+    } else {
+
         taskList.classList.remove("incognito");
         privacyToggle.innerText = "Incognito Mode";
+
     }
 
 });
 
 
 
-// -----------------------------
-// Render tasks when page loads
-// -----------------------------
+// ------------------------------------------------------
+// Initial Render on Page Load
+// ------------------------------------------------------
 
-renderTasks(); t
+renderTasks();
