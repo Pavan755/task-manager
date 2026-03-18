@@ -249,6 +249,28 @@ li {
 
 }
 
+/* =========================
+   Task Hover Effects
+========================= */
+
+li {
+
+  transition: transform 0.15s ease,
+              background 0.15s ease,
+              box-shadow 0.15s ease;
+
+}
+
+li:hover {
+
+  transform: translateY(-2px);
+
+  background: #fafafa;
+
+  box-shadow: 2px 2px 0px black;
+
+}
+
 
 
 /* ======================================
@@ -268,6 +290,32 @@ li {
 
 }
 
+
+/* =========================
+   Empty State
+========================= */
+
+.empty-state {
+
+  text-align: center;
+
+  padding: 30px 10px;
+
+  opacity: 0.6;
+
+  font-style: italic;
+
+}
+
+.empty-state small {
+
+  display: block;
+
+  margin-top: 6px;
+
+  font-size: 12px;
+
+}
 
 
 /* ======================================
