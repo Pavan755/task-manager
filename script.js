@@ -54,7 +54,7 @@ function addTask() {
     // Add task to array
     tasks.push(task);
 
-    // Save tasks to localStorage
+    // Save tasks
     saveTasks();
 
     // Clear input field
@@ -107,7 +107,7 @@ function renderTasks() {
             <span>${task.text} (${task.energy})</span>
 
             <div class="task-actions">
-                <button onclick="toggleTask(${task.id})">✔</button>
+                <button onclick="toggleTask(${task.id}, this)">✔</button>
                 <button onclick="deleteTask(${task.id})">🗑</button>
             </div>
         `;
@@ -124,25 +124,32 @@ function renderTasks() {
 
 // -----------------------------
 // Function: Toggle task complete
+// Includes burn animation
 // -----------------------------
 
-function toggleTask(id) {
+function toggleTask(id, btn) {
 
-    tasks = tasks.map(task => {
+    const taskElement = btn.closest("li");
 
-        if (task.id === id) {
-            task.completed = !task.completed;
-        }
+    // Apply burn animation class
+    taskElement.classList.add("burn");
 
-        return task;
+    setTimeout(() => {
 
-    });
+        tasks = tasks.map(task => {
 
-    // Save tasks
-    saveTasks();
+            if (task.id === id) {
+                task.completed = !task.completed;
+            }
 
-    // Re-render UI
-    renderTasks();
+            return task;
+
+        });
+
+        saveTasks();
+        renderTasks();
+
+    }, 400);
 }
 
 
@@ -155,10 +162,7 @@ function deleteTask(id) {
 
     tasks = tasks.filter(task => task.id !== id);
 
-    // Save tasks
     saveTasks();
-
-    // Re-render UI
     renderTasks();
 }
 
@@ -214,7 +218,8 @@ filterButtons.forEach(button => {
 
 
 
+// -----------------------------
 // Render tasks when page loads
-
+// -----------------------------
 
 renderTasks();
