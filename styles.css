@@ -1,10 +1,7 @@
-/* body {
-  font-family: Arial, sans-serif;
-  background: #f5f6fa;
-  display: flex;
-  justify-content: center;
-  padding: 40px;
-} */
+/* ======================================
+   GLOBAL STYLES
+   Minimal Notebook Theme
+====================================== */
 
 body {
 
@@ -12,6 +9,7 @@ body {
 
   background-color: #f4f4f4;
 
+  /* subtle paper texture */
   background-image:
     radial-gradient(circle at 25% 25%, rgba(0,0,0,0.03) 2px, transparent 2px),
     radial-gradient(circle at 75% 75%, rgba(0,0,0,0.03) 2px, transparent 2px);
@@ -20,13 +18,20 @@ body {
 
   display: flex;
   justify-content: center;
-  padding: 40px;
 
+  padding: 40px;
 }
+
+
+
+/* ======================================
+   MAIN CONTAINER
+====================================== */
 
 .container {
 
-  width: 520px;
+  width: 100%;
+  max-width: 520px;
 
   background: white;
 
@@ -38,29 +43,96 @@ body {
 
 }
 
+
+
+/* ======================================
+   HEADER
+====================================== */
+
 h1 {
   text-align: center;
-}
-
-.task-input {
-  display: flex;
-  gap: 10px;
   margin-bottom: 20px;
 }
 
+
+
+/* ======================================
+   TASK INPUT SECTION
+====================================== */
+
+.task-input {
+
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+
+}
+
 .task-input input {
+
   flex: 1;
   padding: 10px;
+
+  border: 1px solid black;
+
 }
+
+.task-input select,
+.task-input button {
+
+  padding: 10px;
+  border: 1px solid black;
+
+}
+
+
+
+/* ======================================
+   BUTTONS
+====================================== */
 
 button {
-  padding: 8px 12px;
+
   cursor: pointer;
+  background: white;
+
+  transition: 0.2s;
+
 }
 
+button:hover {
+
+  background: black;
+  color: white;
+
+}
+
+
+
+/* ======================================
+   FILTER BUTTONS
+====================================== */
+
+.filters {
+
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+}
+
+
+
+/* ======================================
+   TASK LIST
+====================================== */
+
 ul {
+
   list-style: none;
   padding: 0;
+
 }
 
 li {
@@ -77,18 +149,22 @@ li {
 }
 
 .completed span {
+
   text-decoration: line-through;
   color: gray;
+
 }
 
-/* Progress Bar */
 
-/* --------------------------
-   Sketch Style Progress Bar
--------------------------- */
+
+/* ======================================
+   PROGRESS BAR
+====================================== */
 
 .progress-section {
+
   margin: 18px 0;
+
 }
 
 .progress-bar {
@@ -111,8 +187,6 @@ li {
 
 }
 
-/* actual progress fill */
-
 #progress {
 
   height: 100%;
@@ -134,47 +208,163 @@ li {
 
   font-size: 12px;
   margin-top: 8px;
+
   font-style: italic;
+
   letter-spacing: 1px;
+
   text-align: right;
-  opacity: 0.8;
 
 }
 
-/* Burn animation when completing task */
+
+
+/* ======================================
+   BURN ANIMATION
+====================================== */
 
 .burn {
+
   animation: burnTask 0.5s forwards;
+
 }
 
 @keyframes burnTask {
-  0% {
-    opacity: 1;
-    transform: scale(1);
-  }
+
+  0% { opacity: 1; }
 
   50% {
+
     opacity: 0.5;
     transform: scale(1.05);
-    background: #fee2e2;
+
   }
 
   100% {
+
     opacity: 0;
     transform: translateX(40px);
+
   }
+
 }
 
 
-/* Incognito mode */
+
+/* ======================================
+   INCOGNITO MODE
+====================================== */
 
 .incognito span {
+
   filter: blur(6px);
   transition: filter 0.2s;
+
 }
 
-/* Reveal text on hover */
-
 .incognito li:hover span {
+
   filter: blur(0);
+
+}
+
+
+
+/* ======================================
+   RESPONSIVE DESIGN
+====================================== */
+
+/* 📱 MOBILE (phones) */
+
+@media (max-width: 600px) {
+
+  body {
+    padding: 20px;
+  }
+
+  .container {
+
+    max-width: 100%;
+    padding: 20px;
+
+    box-shadow: none;
+
+  }
+
+  /* Stack task input */
+
+  .task-input {
+
+    flex-direction: column;
+
+  }
+
+  .task-input input,
+  .task-input select,
+  .task-input button {
+
+    width: 100%;
+
+  }
+
+  /* Stack task layout */
+
+  li {
+
+    flex-direction: column;
+    gap: 8px;
+
+  }
+
+  .task-actions {
+
+    width: 100%;
+
+    display: flex;
+    justify-content: flex-end;
+
+  }
+
+}
+
+
+
+/* 📲 TABLET */
+
+@media (min-width: 601px) and (max-width: 900px) {
+
+  .container {
+
+    max-width: 600px;
+
+  }
+
+}
+
+
+
+/* 💻 SMALL LAPTOP */
+
+@media (min-width: 901px) and (max-width: 1200px) {
+
+  .container {
+
+    max-width: 520px;
+
+  }
+
+}
+
+
+
+/* 🖥 LARGE SCREENS */
+
+@media (min-width: 1201px) {
+
+  .container {
+
+    max-width: 520px;
+
+  }
+
 }
