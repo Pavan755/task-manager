@@ -7,16 +7,17 @@ const energyTag = document.getElementById("energyTag");   // Energy tag dropdown
 const addTaskBtn = document.getElementById("addTaskBtn"); // Add task button
 const taskList = document.getElementById("taskList");     // Task list container
 const progressBar = document.getElementById("progress");  // Progress bar element
+const privacyToggle = document.getElementById("privacyToggle"); // Privacy toggle button
 
 
 
 // -----------------------------
 // Load tasks from localStorage
-// If nothing exists → use empty array
 // -----------------------------
 
-let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-let currentFilter = "all";   // Default filter
+let tasks = JSON.parse(localStorage.getItem("tasks")) || []; // Task array
+let currentFilter = "all";   // Current filter
+let incognitoMode = false;   // Incognito mode flag
 
 
 
@@ -45,19 +46,19 @@ function addTask() {
 
     // Create task object
     const task = {
-        id: Date.now(),   // Unique ID
+        id: Date.now(),
         text: text,
         energy: energy,
         completed: false
     };
 
-    // Add task to array
+    // Add task
     tasks.push(task);
 
     // Save tasks
     saveTasks();
 
-    // Clear input field
+    // Clear input
     taskInput.value = "";
 
     // Re-render UI
@@ -67,17 +68,18 @@ function addTask() {
 
 
 // -----------------------------
-// Function: Render tasks on UI
+// Function: Render tasks
 // -----------------------------
 
 function renderTasks() {
 
-    // Clear existing list
+    // Clear list
     taskList.innerHTML = "";
 
     let filteredTasks = tasks;
 
     // Apply filters
+
     if (currentFilter === "active") {
         filteredTasks = tasks.filter(task => !task.completed);
     }
@@ -95,12 +97,12 @@ function renderTasks() {
     }
 
 
-    // Display tasks
+    // Render tasks
+
     filteredTasks.forEach(task => {
 
         const li = document.createElement("li");
 
-        // Apply completed style
         li.className = task.completed ? "completed" : "";
 
         li.innerHTML = `
@@ -123,7 +125,7 @@ function renderTasks() {
 
 
 // -----------------------------
-// Function: Toggle task complete
+// Function: Toggle task completion
 // Includes burn animation
 // -----------------------------
 
@@ -131,7 +133,7 @@ function toggleTask(id, btn) {
 
     const taskElement = btn.closest("li");
 
-    // Apply burn animation class
+    // Burn animation
     taskElement.classList.add("burn");
 
     setTimeout(() => {
@@ -169,7 +171,7 @@ function deleteTask(id) {
 
 
 // -----------------------------
-// Function: Save tasks to localStorage
+// Function: Save tasks
 // -----------------------------
 
 function saveTasks() {
@@ -186,13 +188,32 @@ function saveTasks() {
 
 function updateProgress() {
 
-    const total = tasks.length;
+    const progressText = document.getElementById("progressText");
 
-    const completed = tasks.filter(task => task.completed).length;
+    const totalTasks = tasks.length;
 
-    const percent = total === 0 ? 0 : (completed / total) * 100;
+    const completedTasks = tasks.filter(task => task.completed).length;
 
+    let percent = 0;
+
+    if (totalTasks > 0) {
+        percent = Math.round((completedTasks / totalTasks) * 100);
+    }
+
+    // Update progress bar width
     progressBar.style.width = percent + "%";
+
+    // Update progress text
+    if (progressText) {
+        progressText.textContent = percent + "% complete";
+    }
+
+    // Optional: highlight when 100% completed
+    if (percent === 100) {
+        progressBar.style.background = "black";
+    } else {
+        progressBar.style.background = "";
+    }
 
 }
 
@@ -213,6 +234,27 @@ filterButtons.forEach(button => {
         renderTasks();
 
     });
+
+});
+
+
+
+// -----------------------------
+// Incognito Mode Toggle
+// -----------------------------
+
+privacyToggle.addEventListener("click", () => {
+
+    incognitoMode = !incognitoMode;
+
+    if (incognitoMode) {
+        taskList.classList.add("incognito");
+        privacyToggle.innerText = "Disable Incognito";
+    }
+    else {
+        taskList.classList.remove("incognito");
+        privacyToggle.innerText = "Incognito Mode";
+    }
 
 });
 
