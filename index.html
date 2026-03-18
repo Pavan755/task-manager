@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Task Manager</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Task Manager</h1>
+
+<div class="task-input">
+
+<input type="text" id="taskInput" placeholder="Enter a new task">
+
+<select id="energyTag">
+<option value="quick">Quick Win</option>
+<option value="deep">Deep Work</option>
+</select>
+
+<button id="addTaskBtn">Add Task</button>
+
+</div>
+
+<div class="progress-section">
+
+<label>Progress</label>
+
+<div class="progress-bar">
+<div id="progress"></div>
+</div>
+
+</div>
+
+<div class="filters">
+
+<button data-filter="all">All</button>
+<button data-filter="active">Active</button>
+<button data-filter="completed">Completed</button>
+<button data-filter="quick">Quick Win</button>
+<button data-filter="deep">Deep Work</button>
+
+</div>
+
+<ul id="taskList"></ul>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
