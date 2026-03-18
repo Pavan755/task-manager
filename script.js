@@ -1,6 +1,6 @@
-// -----------------------------
-// DOM Elements
-// -----------------------------
+
+// DOM Elements -----------------------------
+
 
 const taskInput = document.getElementById("taskInput");   // Task input field
 const energyTag = document.getElementById("energyTag");   // Energy tag dropdown
@@ -11,9 +11,9 @@ const privacyToggle = document.getElementById("privacyToggle"); // Privacy toggl
 
 
 
-// -----------------------------
-// Load tasks from localStorage
-// -----------------------------
+
+// Load tasks from localStorage-----------------------------
+
 
 let tasks = JSON.parse(localStorage.getItem("tasks")) || []; // Task array
 let currentFilter = "all";   // Current filter
@@ -21,11 +21,30 @@ let incognitoMode = false;   // Incognito mode flag
 
 
 
-// -----------------------------
-// Add task button click event
-// -----------------------------
+
+// Add task button click event-----------------------------
+
 
 addTaskBtn.addEventListener("click", addTask);
+// Allow adding task with ENTER key
+taskInput.addEventListener("keypress", function(event) {
+
+    if (event.key === "Enter") {
+        addTask();
+    }
+
+});
+// Prevent form submission on ENTER key
+taskInput.addEventListener("keypress", function(event) {
+
+    if (event.key === "Enter") {
+
+        event.preventDefault();
+        addTask();
+
+    }
+
+});
 
 
 
@@ -264,4 +283,4 @@ privacyToggle.addEventListener("click", () => {
 // Render tasks when page loads
 // -----------------------------
 
-renderTasks();
+renderTasks();t
