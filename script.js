@@ -14,7 +14,7 @@ const taskList = document.getElementById("taskList");
 
 
 let tasks = JSON.parse(localStorage.getItem("tasks")) || []; // Array of task objects
-
+let currentFilter= "all"; // Default filter for energy tags
 
 
 // Add task button click event
@@ -142,4 +142,62 @@ function saveTasks() {
 // Render tasks when page loads
 
 
-renderTasks();
+function renderTasks() {
+    // Clear existing list
+    taskList.innerHTML = "";
+
+    let filteredTasks = tasks;
+
+    // Apply filters based on currentFilter value
+    if (currentFilter !== "active") {
+        filteredTasks = tasks.filter(task => task=> !task.completed);
+
+    }
+
+    if (currentFilter === "completed") {
+        filteredTasks = tasks.filter(task => task.completed);
+    }
+
+    if (currentFilter === "quick")  {
+        filteredTasks = tasks.filter(task => task.energy === "quick");
+    }
+
+    if (currentFilter ==="deep") {
+        filteredTasks = tasks.filter(task => task.energy === "deep");
+    }
+
+    filteredTasks.forEach(task => {
+
+        const li = document.createElement("li");
+        // Apply completed style
+        li.className = task.completed ? "completed" : "";
+
+        li.innerHTML = `
+            <span>${task.text} (${task.energy})</span>
+
+            <div class="task-actions">
+                <button onclick="toggleTask(${task.id})">✔</button>
+                <button onclick="deleteTask(${task.id})">🗑</button>
+            </div>
+        `;
+
+        taskList.appendChild(li);
+
+    });
+
+}
+
+// filter button logic
+const filterButtons = document.querySelectorAll(".filters button"); // Select all filter buttons
+
+filterButtons.forEach(button => {
+
+    button.addEventListener("click", () => {
+
+        currentFilter = button.getAttribute("data-filter"); // Update current filter based on button's data-filter attribute
+
+        renderTasks(); // Re-render tasks with the new filter applied
+
+    });
+
+});
