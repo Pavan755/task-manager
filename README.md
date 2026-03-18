@@ -23,11 +23,7 @@ The interface follows a **minimal notebook aesthetic**, emphasizing clarity and 
 
 # Live Demo
 
-*(Add your deployment link here after deploying)*
-
-Example:
-
-https://your-task-manager.vercel.app
+https://pavan755.github.io/task-manager/
 
 ---
 
