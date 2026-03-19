@@ -1,6 +1,5 @@
 /* ======================================
-   GLOBAL STYLES
-   Minimal Notebook Theme
+   GLOBAL STYLES (Notebook Theme)
 ====================================== */
 
 body {
@@ -9,23 +8,36 @@ body {
 
   background-color: #f4f4f4;
 
-  /* subtle paper texture */
   background-image:
     radial-gradient(circle at 25% 25%, rgba(0,0,0,0.03) 2px, transparent 2px),
     radial-gradient(circle at 75% 75%, rgba(0,0,0,0.03) 2px, transparent 2px);
 
   background-size: 60px 60px;
 
-  display: flex;
-  justify-content: center;
-
   padding: 40px;
+
 }
 
 
 
 /* ======================================
-   MAIN CONTAINER
+   APP LAYOUT
+====================================== */
+
+.app-layout {
+
+  display: flex;
+  gap: 30px;
+
+  align-items: flex-start;
+  justify-content: center;
+
+}
+
+
+
+/* ======================================
+   MAIN TASK CONTAINER
 ====================================== */
 
 .container {
@@ -46,18 +58,37 @@ body {
 
 
 /* ======================================
-   HEADER
+   DASHBOARD PANEL
 ====================================== */
 
-h1 {
-  text-align: center;
-  margin-bottom: 20px;
+.dashboard {
+
+  width: 280px;
+
+  background: white;
+
+  padding: 20px;
+
+  border: 2px solid black;
+
+  box-shadow: 4px 4px 0px black;
+
+  height: fit-content;
+
+}
+
+.dashboard h2 {
+
+  margin-bottom: 15px;
+  border-bottom: 1px dashed black;
+  padding-bottom: 8px;
+
 }
 
 
 
 /* ======================================
-   TASK INPUT SECTION
+   TASK INPUT
 ====================================== */
 
 .task-input {
@@ -72,7 +103,6 @@ h1 {
 
   flex: 1;
   padding: 10px;
-
   border: 1px solid black;
 
 }
@@ -95,7 +125,6 @@ button {
 
   cursor: pointer;
   background: white;
-
   transition: 0.2s;
 
 }
@@ -110,7 +139,7 @@ button:hover {
 
 
 /* ======================================
-   FILTER BUTTONS
+   FILTERS
 ====================================== */
 
 .filters {
@@ -145,6 +174,16 @@ li {
   margin-top: 10px;
 
   border-bottom: 1px dashed black;
+
+  transition: all 0.2s ease;
+
+}
+
+li:hover {
+
+  transform: translateY(-2px);
+  background: #fafafa;
+  box-shadow: 2px 2px 0px black;
 
 }
 
@@ -182,7 +221,6 @@ li {
     #eaeaea 12px
   );
 
-  position: relative;
   overflow: hidden;
 
 }
@@ -200,7 +238,7 @@ li {
     transparent 8px
   );
 
-  transition: width 0.35s ease;
+  transition: width 0.3s ease;
 
 }
 
@@ -209,18 +247,53 @@ li {
   font-size: 12px;
   margin-top: 8px;
 
-  font-style: italic;
-
-  letter-spacing: 1px;
-
   text-align: right;
+  font-style: italic;
 
 }
 
 
 
 /* ======================================
-   BURN ANIMATION
+   EMPTY STATE
+====================================== */
+
+.empty-state {
+
+  text-align: center;
+  padding: 30px 10px;
+
+  opacity: 0.6;
+  font-style: italic;
+
+}
+
+
+
+/* ======================================
+   DASHBOARD CONTENT
+====================================== */
+
+.stats p {
+
+  margin: 6px 0;
+
+}
+
+.insights {
+
+  margin-top: 15px;
+
+  font-style: italic;
+  border-top: 1px dashed black;
+  padding-top: 10px;
+
+}
+
+
+
+/* ======================================
+   ANIMATION
 ====================================== */
 
 .burn {
@@ -233,41 +306,9 @@ li {
 
   0% { opacity: 1; }
 
-  50% {
+  50% { opacity: 0.5; transform: scale(1.05); }
 
-    opacity: 0.5;
-    transform: scale(1.05);
-
-  }
-
-  100% {
-
-    opacity: 0;
-    transform: translateX(40px);
-
-  }
-
-}
-
-/* =========================
-   Task Hover Effects
-========================= */
-
-li {
-
-  transition: transform 0.15s ease,
-              background 0.15s ease,
-              box-shadow 0.15s ease;
-
-}
-
-li:hover {
-
-  transform: translateY(-2px);
-
-  background: #fafafa;
-
-  box-shadow: 2px 2px 0px black;
+  100% { opacity: 0; transform: translateX(40px); }
 
 }
 
@@ -280,7 +321,6 @@ li:hover {
 .incognito span {
 
   filter: blur(6px);
-  transition: filter 0.2s;
 
 }
 
@@ -291,80 +331,26 @@ li:hover {
 }
 
 
-/* =========================
-   Empty State
-========================= */
-
-.empty-state {
-
-  text-align: center;
-
-  padding: 30px 10px;
-
-  opacity: 0.6;
-
-  font-style: italic;
-
-}
-
-.empty-state small {
-
-  display: block;
-
-  margin-top: 6px;
-
-  font-size: 12px;
-
-}
-
-
-/* Dashboard */
-
-.dashboard {
-
-  margin-top: 30px;
-  padding-top: 20px;
-
-  border-top: 2px solid black;
-
-}
-
-.stats p {
-
-  margin: 5px 0;
-
-}
-
-.insights {
-
-  margin-top: 15px;
-  font-style: italic;
-
-}
-
 
 /* ======================================
    RESPONSIVE DESIGN
 ====================================== */
 
-/* 📱 MOBILE (phones) */
+@media (max-width: 768px) {
 
-@media (max-width: 600px) {
+  .app-layout {
 
-  body {
-    padding: 20px;
-  }
-
-  .container {
-
-    max-width: 100%;
-    padding: 20px;
-
-    box-shadow: none;
+    flex-direction: column;
+    align-items: center;
 
   }
 
-  /* Stack task input */
+  .dashboard {
+
+    width: 100%;
+    max-width: 520px;
+
+  }
 
   .task-input {
 
@@ -380,63 +366,10 @@ li:hover {
 
   }
 
-  /* Stack task layout */
-
   li {
 
     flex-direction: column;
     gap: 8px;
-
-  }
-
-  .task-actions {
-
-    width: 100%;
-
-    display: flex;
-    justify-content: flex-end;
-
-  }
-
-}
-
-
-
-/* 📲 TABLET */
-
-@media (min-width: 601px) and (max-width: 900px) {
-
-  .container {
-
-    max-width: 600px;
-
-  }
-
-}
-
-
-
-/* 💻 SMALL LAPTOP */
-
-@media (min-width: 901px) and (max-width: 1200px) {
-
-  .container {
-
-    max-width: 520px;
-
-  }
-
-}
-
-
-
-/* 🖥 LARGE SCREENS */
-
-@media (min-width: 1201px) {
-
-  .container {
-
-    max-width: 520px;
 
   }
 

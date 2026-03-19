@@ -3,34 +3,44 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Task Manager</title>
+    <title>Smart Task Dashboard</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
 
-    <div class="container">
+    <!-- ======================================
+         APP LAYOUT WRAPPER
+    ====================================== -->
 
-        <h1>Task Manager</h1>
+    <div class="app-layout">
 
+        <!-- ======================================
+             TASK MANAGER (MAIN PANEL)
+        ====================================== -->
 
-        <button id="privacyToggle">Incognito Mode</button> <!-- button to toggle incognito mode -->
+        <div class="container">
 
-        <div class="task-input">
+            <h1>Task Manager</h1>
 
-            <input type="text" id="taskInput" placeholder="Enter a new task">
+            <!-- Incognito Toggle -->
+            <button id="privacyToggle">Incognito Mode</button>
 
-            <select id="energyTag">
-                <option value="quick">Quick Win</option>
-                <option value="deep">Deep Work</option>
-            </select>
+            <!-- Task Input -->
+            <div class="task-input">
 
-            <button id="addTaskBtn">Add Task</button>
+                <input type="text" id="taskInput" placeholder="Enter a new task">
 
-        </div>
+                <select id="energyTag">
+                    <option value="quick">Quick Win</option>
+                    <option value="deep">Deep Work</option>
+                </select>
 
-        <div class="progress-section">
+                <button id="addTaskBtn">Add Task</button>
 
+            </div>
+
+            <!-- Progress Section -->
             <div class="progress-section">
 
                 <label>Progress</label>
@@ -43,44 +53,53 @@
 
             </div>
 
-        </div>
+            <!-- Filters -->
+            <div class="filters">
 
-        <div class="filters">
+                <button data-filter="all">All</button>
+                <button data-filter="active">Active</button>
+                <button data-filter="completed">Completed</button>
+                <button data-filter="quick">Quick Win</button>
+                <button data-filter="deep">Deep Work</button>
 
-            <button data-filter="all">All</button>
-            <button data-filter="active">Active</button>
-            <button data-filter="completed">Completed</button>
-            <button data-filter="quick">Quick Win</button>
-            <button data-filter="deep">Deep Work</button>
+            </div>
 
-        </div>
-
-        <ul id="taskList"></ul>
-
-    </div>
-
-    <div class="dashboard">
-
-        <h2>Dashboard</h2>
-
-        <div class="stats">
-
-            <p>Total Tasks: <span id="totalTasks">0</span></p>
-            <p>Completed: <span id="completedTasks">0</span></p>
-            <p>Quick Tasks: <span id="quickTasks">0</span></p>
-            <p>Deep Tasks: <span id="deepTasks">0</span></p>
+            <!-- Task List -->
+            <ul id="taskList"></ul>
 
         </div>
 
-        <div class="insights">
-            <h3>Insights</h3>
-            <p id="insightText">No insights yet</p>
+
+
+        <!-- ======================================
+             DASHBOARD (SIDE PANEL)
+        ====================================== -->
+
+        <div class="dashboard">
+
+            <h2>Dashboard</h2>
+
+            <div class="stats">
+
+                <p>Total Tasks: <span id="totalTasks">0</span></p>
+                <p>Completed: <span id="completedTasks">0</span></p>
+                <p>Quick Tasks: <span id="quickTasks">0</span></p>
+                <p>Deep Tasks: <span id="deepTasks">0</span></p>
+
+            </div>
+
+            <div class="insights">
+
+                <h3>Insights</h3>
+                <p id="insightText">No insights yet</p>
+
+            </div>
+
         </div>
 
     </div>
 
     <script src="script.js"></script>
-
 
 </body>
 
