@@ -4,9 +4,9 @@
 
 function escapeHTML(text) {
 
-    const div = document.createElement("div"); // Create temporary element
-    div.textContent = text; // Browser escapes any HTML automatically
-    return div.innerHTML; // Return safe text
+    const div = document.createElement("div"); // Temporary element
+    div.textContent = text; // Automatically escapes HTML
+    return div.innerHTML;
 
 }
 
@@ -16,22 +16,22 @@ function escapeHTML(text) {
 // DOM Elements
 // ------------------------------------------------------
 
-const taskInput = document.getElementById("taskInput");       // Task input field
-const energyTag = document.getElementById("energyTag");       // Energy tag dropdown
-const addTaskBtn = document.getElementById("addTaskBtn");     // Add task button
-const taskList = document.getElementById("taskList");         // Task list container
-const progressBar = document.getElementById("progress");      // Progress bar element
-const privacyToggle = document.getElementById("privacyToggle"); // Incognito toggle button
+const taskInput = document.getElementById("taskInput");       // Task input
+const energyTag = document.getElementById("energyTag");       // Energy dropdown
+const addTaskBtn = document.getElementById("addTaskBtn");     // Add button
+const taskList = document.getElementById("taskList");         // Task list
+const progressBar = document.getElementById("progress");      // Progress bar
+const privacyToggle = document.getElementById("privacyToggle"); // Incognito toggle
 
 
 
 // ------------------------------------------------------
-// Load tasks from localStorage
+// State Management
 // ------------------------------------------------------
 
-let tasks = JSON.parse(localStorage.getItem("tasks")) || []; // Task storage
-let currentFilter = "all";                                   // Current filter state
-let incognitoMode = false;                                   // Incognito mode flag
+let tasks = JSON.parse(localStorage.getItem("tasks")) || []; // Load tasks
+let currentFilter = "all";                                   // Filter state
+let incognitoMode = false;                                   // Incognito mode
 
 
 
@@ -39,15 +39,15 @@ let incognitoMode = false;                                   // Incognito mode f
 // Event Listeners
 // ------------------------------------------------------
 
-// Add task by clicking button
+// Add task via button
 addTaskBtn.addEventListener("click", addTask);
 
-// Allow adding task with ENTER key
+// Add task via ENTER key
 taskInput.addEventListener("keypress", function (event) {
 
     if (event.key === "Enter") {
 
-        event.preventDefault(); // Prevent form refresh
+        event.preventDefault();
         addTask();
 
     }
@@ -62,10 +62,10 @@ taskInput.addEventListener("keypress", function (event) {
 
 function addTask() {
 
-    const text = escapeHTML(taskInput.value.trim()); // Sanitize input
+    const text = escapeHTML(taskInput.value.trim());
     const energy = energyTag.value;
 
-    // Prevent empty tasks
+    // Validation
     if (text === "") {
 
         alert("Task cannot be empty");
@@ -73,7 +73,6 @@ function addTask() {
 
     }
 
-    // Prevent extremely long tasks
     if (text.length > 100) {
 
         alert("Task must be under 100 characters.");
@@ -81,7 +80,6 @@ function addTask() {
 
     }
 
-    // Create task object
     const task = {
 
         id: Date.now(),
@@ -91,16 +89,13 @@ function addTask() {
 
     };
 
-    // Add task to list
     tasks.push(task);
-
-    // Save tasks
     saveTasks();
 
-    // Clear input field
-    taskInput.value = "";
+    // 🔔 Notification
+    sendNotification("New task added!");
 
-    // Update UI
+    taskInput.value = "";
     renderTasks();
 
 }
@@ -108,71 +103,55 @@ function addTask() {
 
 
 // ------------------------------------------------------
-// Function: Render tasks to UI
+// Function: Render tasks
 // ------------------------------------------------------
 
 function renderTasks() {
 
-    taskList.innerHTML = ""; // Clear list
+    taskList.innerHTML = "";
 
     let filteredTasks = tasks;
 
-    // Apply filters
-
+    // Filters
     if (currentFilter === "active") {
-
         filteredTasks = tasks.filter(task => !task.completed);
-
     }
 
     if (currentFilter === "completed") {
-
         filteredTasks = tasks.filter(task => task.completed);
-
     }
 
     if (currentFilter === "quick") {
-
         filteredTasks = tasks.filter(task => task.energy === "quick");
-
     }
 
     if (currentFilter === "deep") {
-
         filteredTasks = tasks.filter(task => task.energy === "deep");
-
     }
 
 
 
-    // --------------------------------------------------
-    // Empty State UI
-    // --------------------------------------------------
-
+    // Empty State
     if (filteredTasks.length === 0) {
 
-        const emptyMessage = document.createElement("li");
+        const li = document.createElement("li");
+        li.className = "empty-state";
 
-        emptyMessage.className = "empty-state";
-
-        emptyMessage.innerHTML = `
+        li.innerHTML = `
             <span>No tasks yet ✏️</span>
             <small>Add something to get started</small>
         `;
 
-        taskList.appendChild(emptyMessage);
+        taskList.appendChild(li);
 
         updateProgress();
+        updateDashboard();
         return;
-
     }
 
 
 
-    // --------------------------------------------------
-    // Render Tasks
-    // --------------------------------------------------
-
+    // Render tasks
     filteredTasks.forEach(task => {
 
         const li = document.createElement("li");
@@ -193,6 +172,7 @@ function renderTasks() {
     });
 
     updateProgress();
+    updateDashboard();
 
 }
 
@@ -200,23 +180,20 @@ function renderTasks() {
 
 // ------------------------------------------------------
 // Function: Toggle task completion
-// Includes burn animation
 // ------------------------------------------------------
 
 function toggleTask(id, btn) {
 
     const taskElement = btn.closest("li");
 
-    taskElement.classList.add("burn"); // Trigger animation
+    taskElement.classList.add("burn");
 
     setTimeout(() => {
 
         tasks = tasks.map(task => {
 
             if (task.id === id) {
-
                 task.completed = !task.completed;
-
             }
 
             return task;
@@ -225,6 +202,16 @@ function toggleTask(id, btn) {
 
         saveTasks();
         renderTasks();
+
+        // 🔔 Completion notification
+        sendNotification("Task completed!");
+
+        // 🔥 Smart notification (all done)
+        const allCompleted = tasks.length > 0 && tasks.every(t => t.completed);
+
+        if (allCompleted) {
+            sendNotification("All tasks completed 🎉 Great job!");
+        }
 
     }, 400);
 
@@ -248,7 +235,7 @@ function deleteTask(id) {
 
 
 // ------------------------------------------------------
-// Function: Save tasks to localStorage
+// Function: Save tasks
 // ------------------------------------------------------
 
 function saveTasks() {
@@ -267,35 +254,80 @@ function updateProgress() {
 
     const progressText = document.getElementById("progressText");
 
-    const totalTasks = tasks.length;
-    const completedTasks = tasks.filter(task => task.completed).length;
+    const total = tasks.length;
+    const completed = tasks.filter(t => t.completed).length;
 
-    let percent = 0;
+    let percent = total === 0 ? 0 : Math.round((completed / total) * 100);
 
-    if (totalTasks > 0) {
-
-        percent = Math.round((completedTasks / totalTasks) * 100);
-
-    }
-
-    // Update progress bar width
     progressBar.style.width = percent + "%";
 
-    // Update progress label
     if (progressText) {
-
         progressText.textContent = percent + "% complete";
-
     }
 
-    // Optional visual highlight when completed
-    if (percent === 100) {
+    progressBar.style.background = percent === 100 ? "black" : "";
 
-        progressBar.style.background = "black";
+}
 
-    } else {
 
-        progressBar.style.background = "";
+
+// ------------------------------------------------------
+// Function: Dashboard analytics
+// ------------------------------------------------------
+
+function updateDashboard() {
+
+    const total = tasks.length;
+    const completed = tasks.filter(t => t.completed).length;
+    const quick = tasks.filter(t => t.energy === "quick").length;
+    const deep = tasks.filter(t => t.energy === "deep").length;
+
+    document.getElementById("totalTasks").textContent = total;
+    document.getElementById("completedTasks").textContent = completed;
+    document.getElementById("quickTasks").textContent = quick;
+    document.getElementById("deepTasks").textContent = deep;
+
+    let insight = "Start adding tasks to see insights";
+
+    if (quick > deep) {
+        insight = "You focus more on quick tasks. Try deep work.";
+    }
+
+    if (deep > quick) {
+        insight = "Great! You are focusing on deep work.";
+    }
+
+    if (completed === total && total > 0) {
+        insight = "Excellent! All tasks completed 🎉";
+    }
+
+    document.getElementById("insightText").textContent = insight;
+
+}
+
+
+
+// ------------------------------------------------------
+// Notifications
+// ------------------------------------------------------
+
+function requestNotificationPermission() {
+
+    if ("Notification" in window) {
+        Notification.requestPermission();
+    }
+
+}
+
+function sendNotification(message) {
+
+    if (!("Notification" in window)) return;
+
+    if (Notification.permission === "granted") {
+
+        new Notification("Smart Task Dashboard", {
+            body: message
+        });
 
     }
 
@@ -304,7 +336,7 @@ function updateProgress() {
 
 
 // ------------------------------------------------------
-// Filter button logic
+// Filter Buttons
 // ------------------------------------------------------
 
 const filterButtons = document.querySelectorAll(".filters button");
@@ -314,7 +346,6 @@ filterButtons.forEach(button => {
     button.addEventListener("click", () => {
 
         currentFilter = button.getAttribute("data-filter");
-
         renderTasks();
 
     });
@@ -324,7 +355,7 @@ filterButtons.forEach(button => {
 
 
 // ------------------------------------------------------
-// Incognito Mode Toggle
+// Incognito Mode
 // ------------------------------------------------------
 
 privacyToggle.addEventListener("click", () => {
@@ -348,7 +379,9 @@ privacyToggle.addEventListener("click", () => {
 
 
 // ------------------------------------------------------
-// Initial Render on Page Load
+// Initial Load
 // ------------------------------------------------------
 
 renderTasks();
+updateDashboard();
+requestNotificationPermission();
