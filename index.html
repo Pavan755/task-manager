@@ -14,7 +14,7 @@
         <h1>Task Manager</h1>
 
 
-        <button id="privacyToggle">Incognito Mode</button>  <!-- button to toggle incognito mode -->
+        <button id="privacyToggle">Incognito Mode</button> <!-- button to toggle incognito mode -->
 
         <div class="task-input">
 
@@ -33,15 +33,15 @@
 
             <div class="progress-section">
 
-<label>Progress</label>
+                <label>Progress</label>
 
-<div class="progress-bar">
-  <div id="progress"></div>
-</div>
+                <div class="progress-bar">
+                    <div id="progress"></div>
+                </div>
 
-<p id="progressText">0% complete</p>
+                <p id="progressText">0% complete</p>
 
-</div>
+            </div>
 
         </div>
 
@@ -59,8 +59,28 @@
 
     </div>
 
+    <div class="dashboard">
+
+        <h2>Dashboard</h2>
+
+        <div class="stats">
+
+            <p>Total Tasks: <span id="totalTasks">0</span></p>
+            <p>Completed: <span id="completedTasks">0</span></p>
+            <p>Quick Tasks: <span id="quickTasks">0</span></p>
+            <p>Deep Tasks: <span id="deepTasks">0</span></p>
+
+        </div>
+
+        <div class="insights">
+            <h3>Insights</h3>
+            <p id="insightText">No insights yet</p>
+        </div>
+
+    </div>
+
     <script src="script.js"></script>
-    
+
 
 </body>
 
