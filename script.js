@@ -1,13 +1,11 @@
 // ------------------------------------------------------
-// Function: Escape HTML to prevent XSS attacks
+// Utility: Escape HTML (Prevent XSS)
 // ------------------------------------------------------
 
 function escapeHTML(text) {
-
-    const div = document.createElement("div"); // Temporary element
-    div.textContent = text; // Automatically escapes HTML
+    const div = document.createElement("div");
+    div.textContent = text;
     return div.innerHTML;
-
 }
 
 
@@ -16,22 +14,22 @@ function escapeHTML(text) {
 // DOM Elements
 // ------------------------------------------------------
 
-const taskInput = document.getElementById("taskInput");       // Task input
-const energyTag = document.getElementById("energyTag");       // Energy dropdown
-const addTaskBtn = document.getElementById("addTaskBtn");     // Add button
-const taskList = document.getElementById("taskList");         // Task list
-const progressBar = document.getElementById("progress");      // Progress bar
-const privacyToggle = document.getElementById("privacyToggle"); // Incognito toggle
+const taskInput = document.getElementById("taskInput");
+const energyTag = document.getElementById("energyTag");
+const addTaskBtn = document.getElementById("addTaskBtn");
+const taskList = document.getElementById("taskList");
+const progressBar = document.getElementById("progress");
+const privacyToggle = document.getElementById("privacyToggle");
 
 
 
 // ------------------------------------------------------
-// State Management
+// State
 // ------------------------------------------------------
 
-let tasks = JSON.parse(localStorage.getItem("tasks")) || []; // Load tasks
-let currentFilter = "all";                                   // Filter state
-let incognitoMode = false;                                   // Incognito mode
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+let currentFilter = "all";
+let incognitoMode = false;
 
 
 
@@ -39,25 +37,19 @@ let incognitoMode = false;                                   // Incognito mode
 // Event Listeners
 // ------------------------------------------------------
 
-// Add task via button
 addTaskBtn.addEventListener("click", addTask);
 
-// Add task via ENTER key
 taskInput.addEventListener("keypress", function (event) {
-
     if (event.key === "Enter") {
-
         event.preventDefault();
         addTask();
-
     }
-
 });
 
 
 
 // ------------------------------------------------------
-// Function: Add new task
+// Function: Add Task
 // ------------------------------------------------------
 
 function addTask() {
@@ -65,45 +57,39 @@ function addTask() {
     const text = escapeHTML(taskInput.value.trim());
     const energy = energyTag.value;
 
-    // Validation
     if (text === "") {
-
-        alert("Task cannot be empty");
+        showToast("Task cannot be empty ❌");
         return;
-
     }
 
     if (text.length > 100) {
-
-        alert("Task must be under 100 characters.");
+        showToast("Max 100 characters allowed ⚠️");
         return;
-
     }
 
     const task = {
-
         id: Date.now(),
-        text: text,
-        energy: energy,
+        text,
+        energy,
         completed: false
-
     };
 
     tasks.push(task);
     saveTasks();
 
-    // 🔔 Notification
-    sendNotification("New task added!");
-
     taskInput.value = "";
+
     renderTasks();
 
+    // Notifications
+    sendNotification("New task added!");
+    showToast("Task added ✅");
 }
 
 
 
 // ------------------------------------------------------
-// Function: Render tasks
+// Function: Render Tasks
 // ------------------------------------------------------
 
 function renderTasks() {
@@ -112,36 +98,30 @@ function renderTasks() {
 
     let filteredTasks = tasks;
 
-    // Filters
     if (currentFilter === "active") {
-        filteredTasks = tasks.filter(task => !task.completed);
+        filteredTasks = tasks.filter(t => !t.completed);
     }
 
     if (currentFilter === "completed") {
-        filteredTasks = tasks.filter(task => task.completed);
+        filteredTasks = tasks.filter(t => t.completed);
     }
 
     if (currentFilter === "quick") {
-        filteredTasks = tasks.filter(task => task.energy === "quick");
+        filteredTasks = tasks.filter(t => t.energy === "quick");
     }
 
     if (currentFilter === "deep") {
-        filteredTasks = tasks.filter(task => task.energy === "deep");
+        filteredTasks = tasks.filter(t => t.energy === "deep");
     }
 
-
-
-    // Empty State
+    // Empty state
     if (filteredTasks.length === 0) {
-
         const li = document.createElement("li");
         li.className = "empty-state";
-
         li.innerHTML = `
             <span>No tasks yet ✏️</span>
             <small>Add something to get started</small>
         `;
-
         taskList.appendChild(li);
 
         updateProgress();
@@ -149,18 +129,13 @@ function renderTasks() {
         return;
     }
 
-
-
-    // Render tasks
     filteredTasks.forEach(task => {
 
         const li = document.createElement("li");
-
         li.className = task.completed ? "completed" : "";
 
         li.innerHTML = `
             <span>${task.text} (${task.energy})</span>
-
             <div class="task-actions">
                 <button onclick="toggleTask(${task.id}, this)">✔</button>
                 <button onclick="deleteTask(${task.id})">🗑</button>
@@ -168,86 +143,74 @@ function renderTasks() {
         `;
 
         taskList.appendChild(li);
-
     });
 
     updateProgress();
     updateDashboard();
-
 }
 
 
 
 // ------------------------------------------------------
-// Function: Toggle task completion
+// Function: Toggle Task
 // ------------------------------------------------------
 
 function toggleTask(id, btn) {
 
-    const taskElement = btn.closest("li");
-
-    taskElement.classList.add("burn");
+    const li = btn.closest("li");
+    li.classList.add("burn");
 
     setTimeout(() => {
 
         tasks = tasks.map(task => {
-
-            if (task.id === id) {
-                task.completed = !task.completed;
-            }
-
+            if (task.id === id) task.completed = !task.completed;
             return task;
-
         });
 
         saveTasks();
         renderTasks();
 
-        // 🔔 Completion notification
+        showToast("Task completed 🎉");
         sendNotification("Task completed!");
 
-        // 🔥 Smart notification (all done)
-        const allCompleted = tasks.length > 0 && tasks.every(t => t.completed);
-
-        if (allCompleted) {
-            sendNotification("All tasks completed 🎉 Great job!");
+        if (tasks.length > 0 && tasks.every(t => t.completed)) {
+            showToast("All tasks completed 🚀");
+            sendNotification("All tasks completed 🎉");
         }
 
     }, 400);
-
 }
 
 
 
 // ------------------------------------------------------
-// Function: Delete task
+// Function: Delete Task
 // ------------------------------------------------------
 
 function deleteTask(id) {
 
-    tasks = tasks.filter(task => task.id !== id);
+    tasks = tasks.filter(t => t.id !== id);
 
     saveTasks();
     renderTasks();
 
+    showToast("Task deleted 🗑");
 }
 
 
 
 // ------------------------------------------------------
-// Function: Save tasks
+// Save Tasks
 // ------------------------------------------------------
 
 function saveTasks() {
-
     localStorage.setItem("tasks", JSON.stringify(tasks));
-
 }
 
 
 
 // ------------------------------------------------------
-// Function: Update progress bar
+// Progress Bar
 // ------------------------------------------------------
 
 function updateProgress() {
@@ -257,22 +220,19 @@ function updateProgress() {
     const total = tasks.length;
     const completed = tasks.filter(t => t.completed).length;
 
-    let percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+    const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
 
     progressBar.style.width = percent + "%";
 
     if (progressText) {
         progressText.textContent = percent + "% complete";
     }
-
-    progressBar.style.background = percent === 100 ? "black" : "";
-
 }
 
 
 
 // ------------------------------------------------------
-// Function: Dashboard analytics
+// Dashboard
 // ------------------------------------------------------
 
 function updateDashboard() {
@@ -287,69 +247,70 @@ function updateDashboard() {
     document.getElementById("quickTasks").textContent = quick;
     document.getElementById("deepTasks").textContent = deep;
 
-    let insight = "Start adding tasks to see insights";
+    let insight = "Start adding tasks";
 
-    if (quick > deep) {
-        insight = "You focus more on quick tasks. Try deep work.";
-    }
-
-    if (deep > quick) {
-        insight = "Great! You are focusing on deep work.";
-    }
-
-    if (completed === total && total > 0) {
-        insight = "Excellent! All tasks completed 🎉";
-    }
+    if (quick > deep) insight = "Focus more on deep work 🔥";
+    if (deep > quick) insight = "Great deep work focus 💪";
+    if (completed === total && total > 0) insight = "All tasks done 🎉";
 
     document.getElementById("insightText").textContent = insight;
-
 }
 
 
 
 // ------------------------------------------------------
-// Notifications
+// Browser Notifications
 // ------------------------------------------------------
 
 function requestNotificationPermission() {
-
     if ("Notification" in window) {
         Notification.requestPermission();
     }
-
 }
 
 function sendNotification(message) {
-
     if (!("Notification" in window)) return;
 
     if (Notification.permission === "granted") {
-
-        new Notification("Smart Task Dashboard", {
-            body: message
-        });
-
+        new Notification("Task Manager", { body: message });
     }
-
 }
 
 
 
 // ------------------------------------------------------
-// Filter Buttons
+// Toast Notifications (IN-APP 🔥)
 // ------------------------------------------------------
 
-const filterButtons = document.querySelectorAll(".filters button");
+function showToast(message) {
 
-filterButtons.forEach(button => {
+    const toast = document.createElement("div");
+    toast.className = "toast";
+    toast.innerText = message;
 
-    button.addEventListener("click", () => {
+    document.body.appendChild(toast);
 
-        currentFilter = button.getAttribute("data-filter");
+    setTimeout(() => {
+        toast.classList.add("show");
+    }, 50);
+
+    setTimeout(() => {
+        toast.classList.remove("show");
+        setTimeout(() => toast.remove(), 300);
+    }, 2500);
+}
+
+
+
+// ------------------------------------------------------
+// Filters
+// ------------------------------------------------------
+
+document.querySelectorAll(".filters button").forEach(btn => {
+    btn.addEventListener("click", () => {
+        currentFilter = btn.dataset.filter;
         renderTasks();
-
     });
-
 });
 
 
@@ -362,24 +323,18 @@ privacyToggle.addEventListener("click", () => {
 
     incognitoMode = !incognitoMode;
 
-    if (incognitoMode) {
+    taskList.classList.toggle("incognito");
 
-        taskList.classList.add("incognito");
-        privacyToggle.innerText = "Disable Incognito";
-
-    } else {
-
-        taskList.classList.remove("incognito");
-        privacyToggle.innerText = "Incognito Mode";
-
-    }
+    privacyToggle.innerText = incognitoMode
+        ? "Disable Incognito"
+        : "Incognito Mode";
 
 });
 
 
 
 // ------------------------------------------------------
-// Initial Load
+// Init
 // ------------------------------------------------------
 
 renderTasks();

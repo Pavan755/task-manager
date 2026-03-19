@@ -85,6 +85,11 @@ Filtering is handled entirely on the client side using JavaScript array operatio
 
 ---
 
+###  Notifications
+
+- Browser notifications (requires permission)
+- In-app toast notifications for better UX
+
 # Application Workflow
 
 The application follows a simple data flow structure.
